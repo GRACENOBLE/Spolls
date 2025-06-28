@@ -1,33 +1,19 @@
-import { TrendingUp, Users, Zap } from "lucide-react";
+import { Spotlight } from "@/components/ui/spotlight";
 
 const HeroSection = () => {
   return (
-    <section className=" mx-auto px-4 h-[70vh] text-center grid place-items-center">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
-          Anonymous. Real-time. Decisive.
-        </h2>
-        <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-          Cast your vote in the shadows and watch the world decide in real-time.
-          Every choice matters, every vote counts, every decision shapes the
-          collective mind.
+    <div className="h-[60vh] w-full rounded-md flex md:items-center md:justify-center  antialiased bg-grid-white/[0.02] relative ">
+      <Spotlight />
+      <div className=" p-4 max-w-7xl  mx-auto relative z-10  w-full pt-20 md:pt-0">
+        <h1 className="text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
+          Vote <br /> Anonymously in real time.
+        </h1>
+        <p className="mt-4 font-normal text-base text-neutral-300 max-w-lg text-center mx-auto">
+          The most discrete way to show the world your stand on sensitive
+          topics.
         </p>
-        <div className="flex items-center justify-center space-x-8 text-gray-400">
-          <div className="flex items-center space-x-2">
-            <Users className="w-5 h-5 text-purple-400" />
-            <span>Anonymous Voting</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-cyan-400" />
-            <span>Real-time Results</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Zap className="w-5 h-5 text-pink-400" />
-            <span>Instant Impact</span>
-          </div>
-        </div>
       </div>
-    </section>
+    </div>
   );
 };
 

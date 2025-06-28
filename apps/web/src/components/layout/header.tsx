@@ -10,9 +10,9 @@ export default function Header() {
   return (
     <>
       <Container>
-        <div className="flex flex-row items-center justify-between px-2 py-1">
+        <div className="flex flex-row items-center justify-between  py-1">
           <Link href={"/"} aria-label="go to home" className="text-2xl font-semibold">
-            Public Polls
+            Shadow Polls
           </Link>
 
           <div className="flex items-center gap-2">

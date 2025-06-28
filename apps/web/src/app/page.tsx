@@ -14,6 +14,8 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import HeroSection from "@/components/home/hero-section";
+import Container from "@/components/common/container";
+import PollTabs from "@/components/home/poll-tabs";
 
 interface Poll {
   id: string;
@@ -92,12 +94,13 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <Container className="min-h-screen ">
       <div className="relative z-10">
-        {/* Hero Section */}
-        {/* <HeroSection /> */}
+        
+        <HeroSection />
+        <PollTabs />
         {/* Polls Grid */}
-        <section className="container mx-auto px-4 pb-12">
+        {/* <section className="container mx-auto pb-12">
           <div className="mb-8">
             <h3 className="text-2xl font-bold text-white mb-2">Active Polls</h3>
             <p className="text-gray-400">
@@ -209,8 +212,8 @@ export default function HomePage() {
               })}
             </div>
           )}
-        </section>
+        </section> */}
       </div>
-    </div>
+    </Container>
   );
 }
