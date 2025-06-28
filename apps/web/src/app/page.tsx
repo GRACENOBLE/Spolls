@@ -6,6 +6,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Users, TrendingUp, Zap } from "lucide-react";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import HeroSection from "@/components/home/hero-section";
 
 interface Poll {
   id: string;
@@ -20,7 +28,17 @@ interface Poll {
 export default function HomePage() {
   const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
+  const query = useQuery({
+    queryKey: ["todos"],
+    queryFn: async (): Promise<Array<Poll>> => {
+      const response = await fetch("http://localhost:3000/polls");
+      return await response.json();
+    },
+  });
 
+  query.isLoading
+    ? console.log("Fetching...")
+    : query.isSuccess && console.log(query.data);
   // Mock data for demonstration
   useEffect(() => {
     const mockPolls: Poll[] = [
@@ -74,70 +92,10 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
-      </div>
-
+    <div className="min-h-screen">
       <div className="relative z-10">
-        {/* Header */}
-        <header className="border-b border-white/10 backdrop-blur-sm bg-black/20">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/25">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                    PSP
-                  </h1>
-                  <p className="text-sm text-gray-400">
-                    The Public Shadow Poll
-                  </p>
-                </div>
-              </div>
-              <Link href="/create">
-                <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Poll
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </header>
-
         {/* Hero Section */}
-        <section className="container mx-auto px-4 py-12 text-center">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
-              Anonymous. Real-time. Decisive.
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Cast your vote in the shadows and watch the world decide in
-              real-time. Every choice matters, every vote counts, every decision
-              shapes the collective mind.
-            </p>
-            <div className="flex items-center justify-center space-x-8 text-gray-400">
-              <div className="flex items-center space-x-2">
-                <Users className="w-5 h-5 text-purple-400" />
-                <span>Anonymous Voting</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5 text-cyan-400" />
-                <span>Real-time Results</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Zap className="w-5 h-5 text-pink-400" />
-                <span>Instant Impact</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
+        {/* <HeroSection /> */}
         {/* Polls Grid */}
         <section className="container mx-auto px-4 pb-12">
           <div className="mb-8">
