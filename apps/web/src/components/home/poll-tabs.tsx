@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 import Box from "@mui/material/Box";
 import Masonry from "@mui/lab/Masonry";
+import Container from "../common/container";
 
 export default function PollTabs() {
   const tabData = [
@@ -32,9 +33,9 @@ export default function PollTabs() {
   }));
 
   return (
-    <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative flex flex-col  mx-auto w-full  items-start justify-start mb-10">
+    <Container className="h-[20rem] md:h-[40rem] [perspective:1000px] relative flex flex-col  mx-auto w-full  items-start justify-start mb-10">
       <Tabs tabs={tabs} />
-    </div>
+    </Container>
   );
 }
 interface Poll {
@@ -104,75 +105,73 @@ const DummyContent = () => {
 
   return (
     <section className=" mx-auto pb-12 ">
-      {loading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Card
-              key={i}
-              className="bg-black/40 border-white/10 backdrop-blur-sm animate-pulse"
-            >
-              <CardContent className="p-6">
-                <div className="h-4 bg-white/10 rounded mb-4"></div>
-                <div className="h-3 bg-white/10 rounded mb-2"></div>
-                <div className="h-3 bg-white/10 rounded mb-4"></div>
-                <div className="flex justify-between">
-                  <div className="h-6 w-16 bg-white/10 rounded"></div>
-                  <div className="h-6 w-16 bg-white/10 rounded"></div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Box sx={{ width: "100%", minHeight: 393 }}>
-          <Masonry
-            columns={{ xs: 1, sm: 2, md: 3 }}
-            spacing={2}
-          >
-            {polls.map((poll) => {
-              const totalVotes = getTotalVotes(poll);
-              const optionAPercentage =
-                totalVotes > 0 ? (poll.optionA_votes / totalVotes) * 100 : 0;
-              const optionBPercentage =
-                totalVotes > 0 ? (poll.optionB_votes / totalVotes) * 100 : 0;
+        {loading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <Card
+                key={i}
+                className="bg-black/40 border-white/10 backdrop-blur-sm animate-pulse"
+              >
+                <CardContent className="p-6">
+                  <div className="h-4 bg-white/10 rounded mb-4"></div>
+                  <div className="h-3 bg-white/10 rounded mb-2"></div>
+                  <div className="h-3 bg-white/10 rounded mb-4"></div>
+                  <div className="flex justify-between">
+                    <div className="h-6 w-16 bg-white/10 rounded"></div>
+                    <div className="h-6 w-16 bg-white/10 rounded"></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Box sx={{ width: "100%", minHeight: 393 }}>
+            <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
+              {polls.map((poll) => {
+                const totalVotes = getTotalVotes(poll);
+                const optionAPercentage =
+                  totalVotes > 0 ? (poll.optionA_votes / totalVotes) * 100 : 0;
+                const optionBPercentage =
+                  totalVotes > 0 ? (poll.optionB_votes / totalVotes) * 100 : 0;
 
-              return (
-                <Link key={poll.id} href={`/polls/${poll.id}`}>
-                  <Card className="group bg-gray-950/40 border-white/10 backdrop-blur-sm hover:bg-gray-950 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer h-full">
-                    <CardContent className="px-6 ">
-                      <div className="flex items-start justify-between mb-4">
-                        <Badge
-                          variant="secondary"
-                          className="bg-white/10 text-gray-300 border-0"
-                        >
-                          {getTimeAgo(poll.createdAt)}
-                        </Badge>
-                        <div className="flex items-center space-x-1 text-gray-400">
-                          <Users className="w-4 h-4" />
-                          <span className="text-sm font-medium">
-                            {totalVotes.toLocaleString()}
-                          </span>
+                return (
+                  <Link key={poll.id} href={`/polls/${poll.id}`}>
+                    <Card className="group bg-gray-950/40 border-white/10 backdrop-blur-sm hover:bg-gray-950 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer h-full">
+                      <CardContent className="px-6 ">
+                        <div className="flex items-start justify-between mb-4">
+                          <Badge
+                            variant="secondary"
+                            className="bg-white/10 text-gray-300 border-0"
+                          >
+                            {getTimeAgo(poll.createdAt)}
+                          </Badge>
+                          <div className="flex items-center space-x-1 text-gray-400">
+                            <Users className="w-4 h-4" />
+                            <span className="text-sm font-medium">
+                              {totalVotes.toLocaleString()}
+                            </span>
+                          </div>
                         </div>
-                      </div>
 
-                      <h4 className="text-xl font-semibold text-white my-8 group-hover:text-purple-200 transition-colors ">
-                        {poll.question}
-                      </h4>
+                        <h4 className="text-xl font-semibold text-white my-8 group-hover:text-purple-200 transition-colors ">
+                          {poll.question}
+                        </h4>
 
-                      <div className="mt-8 pt-4 border-t border-white/10">
-                        <div className="flex justify-end gap-1 items-center text-xs text-gray-400">
-                          <GoComment className="text-[16px]" />
-                          {poll.optionA_votes.toLocaleString()}
+                        <div className="mt-8 pt-4 border-t border-white/10">
+                          <div className="flex justify-end gap-1 items-center text-xs text-gray-400">
+                            <GoComment className="text-[16px]" />
+                            {poll.optionA_votes.toLocaleString()}
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </Masonry>
-        </Box>
-      )}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </Masonry>
+          </Box>
+        )}
+     
     </section>
   );
 };
