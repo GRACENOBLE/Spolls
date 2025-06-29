@@ -4,9 +4,11 @@ import { Tabs } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-
+import { GoComment } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
+import Box from "@mui/material/Box";
+import Masonry from "@mui/lab/Masonry";
 
 export default function PollTabs() {
   const tabData = [
@@ -72,7 +74,8 @@ const DummyContent = () => {
       },
       {
         id: "3",
-        question: "Would you rather have unlimited money or unlimited time?",
+        question:
+          "Would you rather have unlimited money or unlimited time hoshjfiojsf  idjs;o fdsifhiod if;ioehjf  fe;ifheifhj  oijfdsiofjh;'  ifd;fiohd ;ifa oihdsfoi;hai ih; feidhfih",
         optionA_text: "Unlimited money",
         optionB_text: "Unlimited time",
         optionA_votes: 2341,
@@ -121,85 +124,54 @@ const DummyContent = () => {
           ))}
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {polls.map((poll) => {
-            const totalVotes = getTotalVotes(poll);
-            const optionAPercentage =
-              totalVotes > 0 ? (poll.optionA_votes / totalVotes) * 100 : 0;
-            const optionBPercentage =
-              totalVotes > 0 ? (poll.optionB_votes / totalVotes) * 100 : 0;
+        <Box sx={{ width: "100%", minHeight: 393 }}>
+          <Masonry
+            columns={{ xs: 1, sm: 2, md: 3 }}
+            spacing={2}
+          >
+            {polls.map((poll) => {
+              const totalVotes = getTotalVotes(poll);
+              const optionAPercentage =
+                totalVotes > 0 ? (poll.optionA_votes / totalVotes) * 100 : 0;
+              const optionBPercentage =
+                totalVotes > 0 ? (poll.optionB_votes / totalVotes) * 100 : 0;
 
-            return (
-              <Link key={poll.id} href={`/polls/${poll.id}`}>
-                <Card className="group bg-black/40 border-white/10 backdrop-blur-sm hover:bg-black/60 hover:border-purple-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer h-full">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <Badge
-                        variant="secondary"
-                        className="bg-white/10 text-gray-300 border-0"
-                      >
-                        {getTimeAgo(poll.createdAt)}
-                      </Badge>
-                      <div className="flex items-center space-x-1 text-gray-400">
-                        <Users className="w-4 h-4" />
-                        <span className="text-sm font-medium">
-                          {totalVotes.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    <h4 className="text-lg font-semibold text-white mb-4 group-hover:text-purple-200 transition-colors line-clamp-2">
-                      {poll.question}
-                    </h4>
-
-                    <div className="space-y-3">
-                      <div className="relative">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm text-gray-300 truncate pr-2">
-                            {poll.optionA_text}
+              return (
+                <Link key={poll.id} href={`/polls/${poll.id}`}>
+                  <Card className="group bg-gray-950/40 border-white/10 backdrop-blur-sm hover:bg-gray-950 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer h-full">
+                    <CardContent className="px-6 ">
+                      <div className="flex items-start justify-between mb-4">
+                        <Badge
+                          variant="secondary"
+                          className="bg-white/10 text-gray-300 border-0"
+                        >
+                          {getTimeAgo(poll.createdAt)}
+                        </Badge>
+                        <div className="flex items-center space-x-1 text-gray-400">
+                          <Users className="w-4 h-4" />
+                          <span className="text-sm font-medium">
+                            {totalVotes.toLocaleString()}
                           </span>
-                          <span className="text-sm font-medium text-purple-400">
-                            {optionAPercentage.toFixed(0)}%
-                          </span>
-                        </div>
-                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full transition-all duration-500 shadow-sm shadow-purple-500/50"
-                            style={{ width: `${optionAPercentage}%` }}
-                          ></div>
                         </div>
                       </div>
 
-                      <div className="relative">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm text-gray-300 truncate pr-2">
-                            {poll.optionB_text}
-                          </span>
-                          <span className="text-sm font-medium text-cyan-400">
-                            {optionBPercentage.toFixed(0)}%
-                          </span>
-                        </div>
-                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full transition-all duration-500 shadow-sm shadow-cyan-500/50"
-                            style={{ width: `${optionBPercentage}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
+                      <h4 className="text-xl font-semibold text-white my-8 group-hover:text-purple-200 transition-colors ">
+                        {poll.question}
+                      </h4>
 
-                    <div className="mt-4 pt-4 border-t border-white/10">
-                      <div className="flex justify-between items-center text-xs text-gray-400">
-                        <span>{poll.optionA_votes.toLocaleString()} votes</span>
-                        <span>{poll.optionB_votes.toLocaleString()} votes</span>
+                      <div className="mt-8 pt-4 border-t border-white/10">
+                        <div className="flex justify-end gap-1 items-center text-xs text-gray-400">
+                          <GoComment className="text-[16px]" />
+                          {poll.optionA_votes.toLocaleString()}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </Masonry>
+        </Box>
       )}
     </section>
   );
