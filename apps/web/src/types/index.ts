@@ -1,4 +1,4 @@
-export interface Poll {
+export type Poll = {
   id: string;
   question: string;
   optionA_text: string;
@@ -10,5 +10,16 @@ export interface Poll {
   optionC_votes: number;
   optionD_votes: number;
   createdAt: string;
-  comments_count: string;
-}
+  comments: Comment[];
+  comments_count: number;
+};
+
+export type Comment = {
+  id: string;
+  commentText: string;
+  createdAt: string;
+  parentId: string | null;
+  pollId: string;
+  voterIdentifier: string;
+  children: Comment[];
+};

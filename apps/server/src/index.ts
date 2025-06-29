@@ -158,25 +158,74 @@ app.get("/polls", async (c) => {
 
 /**
  * Endpoint to get details for a single poll.
- * GET /polls/:id
+ * GET /polls/:slug
  */
 app.get("/polls/:slug", async (c) => {
   try {
-    const pollSlug = c.req.param("slug"); // Convert ID from string to number
+    const pollSlug = c.req.param("slug");
 
-    const poll = await db
-      .select()
-      .from(polls)
-      .where(eq(polls.slug, pollSlug))
-      .limit(1);
+    // Fetch the poll by slug and eager load all its comments.
+    // Drizzle's `findMany` is used here, but filtered to find a single poll.
+    // The `with` clause for comments will bring in all comments, including children.
+    const pollResult = await db.query.polls.findMany({
+      where: (pollsTable, { eq }) => eq(pollsTable.slug, pollSlug),
+      with: {
+        comments: {
+          // Order comments to ensure parents typically come before children,
+          // though the actual nesting will be handled in post-processing.
+          orderBy: (commentsTable, { asc }) => asc(commentsTable.createdAt),
+        },
+        pollTopics: {
+          with: {
+            topic: true,
+          },
+        },
+      },
+      limit: 1, // Limit to 1 result as we're fetching by unique slug
+    });
 
-    if (poll.length === 0) {
+    if (pollResult.length === 0) {
       return c.json({ error: "Poll not found" }, 404);
     }
 
-    return c.json(poll[0]); // Return the single poll object
+    const poll = pollResult[0];
+
+    // --- Post-process comments to create a hierarchical structure ---
+    const commentsById: Record<string, any> = {};
+    const topLevelComments: any[] = [];
+
+    // First pass: Populate commentsById map and identify top-level comments
+    poll.comments.forEach((comment) => {
+      commentsById[comment.id] = { ...comment, children: [] };
+      if (!comment.parentId) {
+        topLevelComments.push(commentsById[comment.id]);
+      }
+    });
+
+    // Second pass: Link children to their parents
+    poll.comments.forEach((comment) => {
+      if (comment.parentId && commentsById[comment.parentId]) {
+        commentsById[comment.parentId].children.push(commentsById[comment.id]);
+      }
+    });
+
+    // Transform topics for the poll
+    const formattedTopics = poll.pollTopics.map((pt) => ({
+      name: pt.topic.name,
+      slug: pt.topic.slug,
+    }));
+
+    // Construct the final formatted poll object
+    const formattedPoll = {
+      ...poll,
+      comments: topLevelComments, // Replace flat list with hierarchical comments
+      topics: formattedTopics, // Add formatted topics
+      pollTopics: undefined, // Remove raw join data
+    };
+
+    return c.json(formattedPoll);
   } catch (error) {
-    console.error("Error fetching poll", c.req.param("id"), error);
+    console.error("Error fetching poll by slug:", c.req.param("slug"), error);
     return c.json({ error: "Failed to retrieve poll" }, 500);
   }
 });
