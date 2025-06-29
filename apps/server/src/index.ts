@@ -28,7 +28,7 @@ export type NewAnonymousVote = InferInsertModel<typeof anonymousVotes>;
 // and broadcast updates. In a multi-instance/distributed environment,
 // you would replace this with a dedicated pub/sub service (e.g., Redis Pub/Sub, NATS, or a Cloudflare Durable Object).
 interface PollUpdateEvent {
-  pollId: number;
+  pollId: string;
   updatedPoll: Poll;
 }
 
@@ -123,11 +123,36 @@ app.get("/", (c) => {
  */
 app.get("/polls", async (c) => {
   try {
-    const allPolls = await db.select().from(polls);
-    return c.json(allPolls);
+    // Fetch all polls, and for each poll, eager load its associated topics
+    // using the relations defined in your schema.
+    const allPollsWithTopics = await db.query.polls.findMany({
+      with: {
+        pollTopics: {
+          // This refers to the 'pollTopics' relation defined in pollsRelations
+          with: {
+            topic: true, // Eagerly load the 'topic' details from the 'topics' table
+          },
+        },
+      },
+    });
+
+    // Transform the data for a cleaner API response
+    // to group topics directly under each poll, returning only name and slug for each topic.
+    const formattedPolls = allPollsWithTopics.map((poll) => ({
+      ...poll,
+      // Map the array of pollTopics (join table entries) to just an array of topic objects,
+      // selecting only the 'name' and 'slug' from each topic.
+      topics: poll.pollTopics.map((pt) => ({
+        name: pt.topic.name,
+        slug: pt.topic.slug,
+      })),
+      pollTopics: undefined, // Optionally remove the raw join table data if not needed in the final API response
+    }));
+
+    return c.json(formattedPolls);
   } catch (error) {
-    console.error("Error fetching polls:", error);
-    return c.json({ error: "Failed to retrieve polls" }, 500);
+    console.error("Error fetching polls with categories:", error);
+    return c.json({ error: "Failed to retrieve polls with categories" }, 500);
   }
 });
 
@@ -135,18 +160,14 @@ app.get("/polls", async (c) => {
  * Endpoint to get details for a single poll.
  * GET /polls/:id
  */
-app.get("/polls/:id", async (c) => {
+app.get("/polls/:slug", async (c) => {
   try {
-    const pollId = Number(c.req.param("id")); // Convert ID from string to number
-
-    if (isNaN(pollId)) {
-      return c.json({ error: "Invalid poll ID" }, 400);
-    }
+    const pollSlug = c.req.param("slug"); // Convert ID from string to number
 
     const poll = await db
       .select()
       .from(polls)
-      .where(eq(polls.id, pollId))
+      .where(eq(polls.slug, pollSlug))
       .limit(1);
 
     if (poll.length === 0) {
@@ -184,7 +205,7 @@ app.post("/polls", async (c) => {
       question: body.question,
       optionA_text: body.optionA_text,
       optionB_text: body.optionB_text,
-      // optionA_votes and optionB_votes will default to 0 as per schema, createdAt and updatedAt will default to now.
+      slug: body.slug
     };
 
     const insertedPoll = await db.insert(polls).values(newPollData).returning();
@@ -208,17 +229,13 @@ app.post("/polls", async (c) => {
 app.post("/polls/:id/vote", async (c) => {
   // Corrected path to include leading slash
   try {
-    const pollId = parseInt(c.req.param("id"), 10);
+    const pollId = c.req.param("id");
     const body = await c.req.json();
     const option = body.option; // Expected to be 'A' or 'B'
     // Get the voterIdentifier from the request body.
     // This UUID should be generated and persistently stored by the client (e.g., in localStorage).
     const voterIdentifier: string = body.voterIdentifier;
 
-    // Validate inputs
-    if (isNaN(pollId)) {
-      return c.json({ error: "Invalid poll ID" }, 400);
-    }
     if (option !== "A" && option !== "B") {
       return c.json({ error: 'Invalid vote option. Must be "A" or "B".' }, 400);
     }
@@ -252,6 +269,7 @@ app.post("/polls/:id/vote", async (c) => {
       const newAnonymousVote: NewAnonymousVote = {
         pollId: pollId,
         voterIdentifier: voterIdentifier,
+        chosenOption: body.chosen_option
       };
       await db.insert(anonymousVotes).values(newAnonymousVote);
 

@@ -28,3 +28,17 @@ export const fetchPolls = async () => {
     throw error;
   }
 };
+
+export const fetchPollBySlug = async (slug: string) => {
+    try {
+      const response = await fetch("http://localhost:3000/polls/"+slug);
+      if (!response.ok) {
+        throw new Error(`Server responded with status ${response.status}`);
+      }
+      const poll = await response.json();
+      return poll;
+    } catch (error) {
+      console.error("Failed to fetch polls:", error);
+      throw error;
+    }
+}

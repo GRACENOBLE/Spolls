@@ -18,7 +18,7 @@ export default function PollTabs() {
     content: (
       <div className="w-full  relative  rounded-2xl p-10 font-bold text-white bg-muted">
         <p className="text-xl md:text-4xl pb-6">{label}</p>
-        <PollsMasonry />
+        <PollsMasonry category={value} />
       </div>
     ),
   }));
