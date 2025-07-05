@@ -26,6 +26,7 @@ export default function PollTabs() {
   return (
     <Container className="h-[20rem] md:h-[40rem] [perspective:1000px] relative flex flex-col  mx-auto w-full  items-start justify-start mb-10 ">
       <Tabs tabs={tabs} />
+      {/* <div className="p-8 border border-red-500 h-96"></div> */}
     </Container>
   );
 }

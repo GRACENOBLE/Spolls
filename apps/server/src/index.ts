@@ -285,9 +285,10 @@ app.post("/polls/:id/vote", async (c) => {
     // This UUID should be generated and persistently stored by the client (e.g., in localStorage).
     const voterIdentifier: string = body.voterIdentifier;
 
-    if (option !== "A" && option !== "B") {
+    if (option !== "A" && option !== "B" && option !== "C" && option !== "D") {
       return c.json({ error: 'Invalid vote option. Must be "A" or "B".' }, 400);
     }
+    
     if (!voterIdentifier || typeof voterIdentifier !== "string") {
       return c.json(
         { error: "Missing or invalid voterIdentifier. A UUID is required." },

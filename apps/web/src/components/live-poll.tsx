@@ -1,24 +1,19 @@
 "use client";
 import Container from "@/components/common/container";
 import { Button } from "@/components/ui/button";
-import { fetchPollBySlug } from "@/server";
-import type { Comment, Poll } from "@/types";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { castVote, fetchPollBySlug } from "@/server";
+import type { Poll } from "@/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import CommentsComponent from "./comment-section";
-import { Card, CardContent } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 import { useState } from "react";
-import { Dot, Forward, MessageCircle, Reply } from "lucide-react";
+import { Forward } from "lucide-react";
 import { GoComment } from "react-icons/go";
+
 const LivePoll = ({ slug }: { slug: string }) => {
   const [newComment, setNewComment] = useState("");
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [revealVotes, setRevealVotes] = useState<boolean>(false);
 
   const { isLoading, isSuccess, data, isError } = useQuery({
     queryKey: ["poll"],
@@ -30,12 +25,22 @@ const LivePoll = ({ slug }: { slug: string }) => {
     },
   });
 
+  const { isPending, mutate } = useMutation({
+    mutationFn: ({ option, pollId }: { option: string; pollId: string }) =>
+      castVote(option, pollId),
+  });
+
   const handleAddComment = () => {
     // if (newComment.trim() && onAddComment) {
     //   onAddComment(newComment);
     //   setNewComment("");
     // }
   };
+
+  const handleCastVote = (option: string, pollId: string) => {
+    mutate({ option, pollId });
+  };
+
   return (
     <>
       <section className=" mt-10">
@@ -53,15 +58,60 @@ const LivePoll = ({ slug }: { slug: string }) => {
                   </h1>
                   <div className="flex flex-col gap-2 mt-6">
                     {[
-                      { text: data.optionA_text, votes: data.optionA_votes },
-                      { text: data.optionB_text, votes: data.optionB_votes },
-                      { text: data.optionC_text, votes: data.optionC_votes },
-                      { text: data.optionD_text, votes: data.optionD_votes },
+                      {
+                        value: "A",
+                        text: data.optionA_text,
+                        votes: data.optionA_votes,
+                      },
+                      {
+                        value: "B",
+                        text: data.optionB_text,
+                        votes: data.optionB_votes,
+                      },
+                      {
+                        value: "C",
+                        text: data.optionC_text,
+                        votes: data.optionC_votes,
+                      },
+                      {
+                        value: "D",
+                        text: data.optionD_text,
+                        votes: data.optionD_votes,
+                      },
                     ]
                       .filter((option) => option.text)
                       .map((option, idx) => (
-                        <Button key={idx} variant="outline">
-                          {option.text}
+                        <Button
+                          key={idx}
+                          variant="outline"
+                          disabled={revealVotes}
+                          onClick={() => handleCastVote(option.value, data.id)}
+                          className="relative overflow-hidden"
+                        >
+                          {/* Background fill based on vote fraction */}
+                          {revealVotes && (
+                          <span
+                            className="absolute left-0 top-0 h-full bg-primary/30 z-0 transition-all"
+                            style={revealVotes&&{
+                            width: `${
+                              data.optionA_votes +
+                              data.optionB_votes +
+                              data.optionC_votes +
+                              data.optionD_votes > 0
+                              ? (option.votes /
+                                (data.optionA_votes +
+                                  data.optionB_votes +
+                                  data.optionC_votes +
+                                  data.optionD_votes)) *
+                                100
+                              : 0
+                            }%`,
+                            }}
+                          />
+                          )}
+                          <span className="relative z-10">
+                          {revealVotes ? "" : option.text}
+                          </span>
                         </Button>
                       ))}
                   </div>
