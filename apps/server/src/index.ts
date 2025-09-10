@@ -34,13 +34,13 @@ interface PollUpdateEvent {
 
 // A Map to store active SSE connections, keyed by pollId
 const activePollStreams = new Map<
-  number,
+  string,
   Set<ReadableStreamDefaultController<Uint8Array>>
 >();
 
 // Function to add a new SSE client for a specific poll
 const addPollStreamClient = (
-  pollId: number,
+  pollId: string,
   controller: ReadableStreamDefaultController<Uint8Array>
 ) => {
   if (!activePollStreams.has(pollId)) {
@@ -56,7 +56,7 @@ const addPollStreamClient = (
 
 // Function to remove an SSE client
 const removePollStreamClient = (
-  pollId: number,
+  pollId: string,
   controller: ReadableStreamDefaultController<Uint8Array>
 ) => {
   const clients = activePollStreams.get(pollId);
@@ -390,9 +390,9 @@ app.post("/polls/:id/vote", async (c) => {
  */
 app.get("/polls/:id/stream", async (c) => {
   // Corrected path from /api/polls to /polls
-  const pollId = Number(c.req.param("id"));
+  const pollId = c.req.param("id");
 
-  if (isNaN(pollId)) {
+  if (!pollId) {
     return c.json({ error: "Invalid poll ID for stream" }, 400);
   }
 

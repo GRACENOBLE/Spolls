@@ -11,30 +11,35 @@ async function seed() {
     {
       question:
         "Would you rather fight one horse-sized duck or one hundred duck-sized horses?",
+      slug: "horse-sized-duck-vs-duck-sized-horses",
       optionA_text: "One horse-sized duck",
       optionB_text: "One hundred duck-sized horses",
     },
     {
       question:
         "Would you rather have the ability to talk to animals or speak all human languages?",
+      slug: "talk-to-animals-vs-speak-all-languages",
       optionA_text: "Talk to animals",
       optionB_text: "Speak all human languages",
     },
     {
       question:
         "Would you rather always be 10 minutes late or always be 20 minutes early?",
+      slug: "10-minutes-late-vs-20-minutes-early",
       optionA_text: "Always 10 minutes late",
       optionB_text: "Always 20 minutes early",
     },
     {
       question:
         "Would you rather live without the internet or live without air conditioning?",
+      slug: "without-internet-vs-without-air-conditioning",
       optionA_text: "Without Internet",
       optionB_text: "Without Air Conditioning",
     },
     {
       question:
         "Would you rather only be able to whisper or only be able to shout?",
+      slug: "only-whisper-vs-only-shout",
       optionA_text: "Only whisper",
       optionB_text: "Only shout",
     },
