@@ -6,9 +6,9 @@ import { logger } from "hono/logger";
 import { serve } from "@hono/node-server"; // For serving Hono on Node.js
 
 // Import your Drizzle schema
-import { polls, anonymousVotes } from "./db/schema";
+import { polls, anonymousVotes } from "./db/schema.js";
 // Import your pre-initialized Drizzle DB client
-import { db } from "./db"; // Assuming this file exports your Drizzle client
+import { db } from "./db/index.js"; // Assuming this file exports your Drizzle client
 
 import {
   and,
