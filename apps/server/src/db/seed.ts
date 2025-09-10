@@ -2,7 +2,7 @@
 import "dotenv/config"; // Ensure environment variables are loaded for DATABASE_URL
 import { db } from "./index.js"; // Import your Drizzle DB client
 import { polls } from "./schema.js"; // Import your polls schema
-import type { NewPoll } from "../index.js";  // Import NewPoll type from your main API file
+import type { NewPoll } from "../index.js"; // Import NewPoll type from your main API file
 
 async function seed() {
   console.log("Starting database seeding...");

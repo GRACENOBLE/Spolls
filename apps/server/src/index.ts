@@ -254,7 +254,7 @@ app.post("/polls", async (c) => {
       question: body.question,
       optionA_text: body.optionA_text,
       optionB_text: body.optionB_text,
-      slug: body.slug
+      slug: body.slug,
     };
 
     const insertedPoll = await db.insert(polls).values(newPollData).returning();
@@ -288,7 +288,7 @@ app.post("/polls/:id/vote", async (c) => {
     if (option !== "A" && option !== "B" && option !== "C" && option !== "D") {
       return c.json({ error: 'Invalid vote option. Must be "A" or "B".' }, 400);
     }
-    
+
     if (!voterIdentifier || typeof voterIdentifier !== "string") {
       return c.json(
         { error: "Missing or invalid voterIdentifier. A UUID is required." },
@@ -319,7 +319,7 @@ app.post("/polls/:id/vote", async (c) => {
       const newAnonymousVote: NewAnonymousVote = {
         pollId: pollId,
         voterIdentifier: voterIdentifier,
-        chosenOption: body.chosen_option
+        chosenOption: body.chosen_option,
       };
       await db.insert(anonymousVotes).values(newAnonymousVote);
 
